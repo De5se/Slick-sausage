@@ -6,6 +6,8 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject LoosePanel;
     [SerializeField] private GameObject StartPanel;
     [SerializeField] private GameObject WinPanel;
+    [SerializeField] private GameObject GamePanel;
+    [SerializeField] private GameObject PausePanel;
 
     private void Start()
     {
@@ -24,6 +26,7 @@ public class GameController : MonoBehaviour
     public void Play()
     {
         StartPanel.SetActive(false);
+        GamePanel.SetActive(true);
         Time.timeScale = 1f;
     }
 
@@ -31,5 +34,17 @@ public class GameController : MonoBehaviour
     {
         WinPanel.SetActive(true);
         Time.timeScale = 0.000001f;
+    }
+
+    public void Pause()
+    {
+        PausePanel.SetActive(true);
+        Time.timeScale = 0.000001f;
+    }
+
+    public void Continue()
+    {
+        PausePanel.SetActive(false);
+        Time.timeScale = 1f;
     }
 }

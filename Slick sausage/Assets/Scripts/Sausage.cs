@@ -1,31 +1,24 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Sausage : MonoBehaviour
 {
     [SerializeField] private float Power = 100;
+    [SerializeField] private float maxSpedX = 4f;
+    [SerializeField] private float maxSpedY = 10f;
     [SerializeField] private Trajectory trajectory;
 
-    private Rigidbody rigidbody;
-
-    private Camera mainCamera;
+    [SerializeField] private List<Rigidbody> rigs = new List<Rigidbody>();
 
     private bool isDragging;
-    [SerializeField] private bool isGrounded;
+    [HideInInspector] byte rigsColided = 0;
 
     private Vector3 startPos;
     private Vector3 endPos;
 
-    private void Start()
-    {
-        mainCamera = Camera.main;
-        rigidbody = GetComponent<Rigidbody>();
-    }
-
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && isDragging == false && isGrounded == true)
+        if (Input.GetMouseButtonDown(0) && isDragging == false && rigsColided > 0)
         {
             OnDragStart();
         }
@@ -52,7 +45,7 @@ public class Sausage : MonoBehaviour
     {
         endPos = Input.mousePosition / 100f; 
 
-        trajectory.Show(transform.position, CalculateSpeed());
+        trajectory.Show(CalculateSpeed());
     }
 
     private void OnDragEnd()
@@ -64,14 +57,14 @@ public class Sausage : MonoBehaviour
 
     private void Jump()
     {
-        rigidbody.velocity = CalculateSpeed();
+        Vector3 velocity = CalculateSpeed();
+
+        for (int i = 0; i < rigs.Count; i++)
+            rigs[i].velocity = velocity;
     }
 
     private Vector3 CalculateSpeed()
     {
-        float maxSpedX = 4f;
-        float maxSpedY = 10f;
-
         Vector3 speed = (startPos - endPos) * Power;
 
         if (speed.x > 0)
@@ -94,13 +87,13 @@ public class Sausage : MonoBehaviour
         return speed;
     }
 
-    private void OnCollisionStay(Collision collision)
+    public void PlusRigCollision()
     {
-        isGrounded = true;
+        rigsColided++;
     }
 
-    private void OnCollisionExit(Collision collision)
+    public void MinusRigCollision()
     {
-        isGrounded = false;
+        rigsColided--;
     }
 }
